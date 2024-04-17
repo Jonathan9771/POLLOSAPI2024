@@ -13,12 +13,24 @@ except Exception as e:
     sys.exit()
 
 
-@app.route("/")
-def hello_world():
-    return "POLLOS A LA NARANJA API, NARANJA Y EL POLLO, LAS BASES DE TODA VIDA DIGNA"
+@app.route("/getTests", methods=['GET'])
+def getTests():
+    data = sql.GetTests()
+    return make_response(jsonify({"Tests": data}))
+
+@app.route("/getSuccesses", methods=['GET'])
+def getSuccesses():
+    data = sql.GetSuccesses()
+    return make_response(jsonify({"Tests": data}))
+
+@app.route("/getErrors", methods=['GET'])
+def getErrors():
+    data = sql.GetErrors()
+    return make_response(jsonify({"Tests": data}))
 
 if __name__ == '__main__':
     print ("Running API...")
+    app.run(debug=True)
     #app.run(host='0.0.0.0', port=10206, debug=True)
     
     app.run()
