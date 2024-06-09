@@ -121,6 +121,42 @@ def getHistory():
     else:
         return make_response(jsonify({"History": data}), 404)
 
+@app.route("/getSuccessfullTasks", methods=['GET'])
+def getSuccessfullTasks():
+    TestId = request.args.get('TestId')
+    action = request.args.get('action')
+    data = sql.getAllSuccessfullTasks(TestId, action)
+    if(data):
+        return make_response(jsonify({"Tasks": data}), 200)
+    else:
+        return make_response(jsonify({"Tasks": data}), 404)
+    
+@app.route("/insertTask", methods=['POST'])
+def insertTask():
+    request_data = request.get_json()
+    if request_data:
+        class_bd = request_data.get('class')
+        css_selector = request_data.get('css_selector')
+        id = request_data.get('id')
+        link_text = request_data.get('link_text')
+        partial_link_text = request_data.get('partial_link_text')
+        name = request_data.get('name')
+        tag_name = request_data.get('tag_name')
+        xpath = request_data.get('xpath')
+        action = request_data.get('action')
+        access = request_data.get('access')
+        quantity = request_data.get('quantity')
+        selector = request_data.get('selector')
+        text = request_data.get('text')
+        position = request_data.get('position')
+        success_id = request_data.get('success_id')
+        error_id = request_data.get('error_id')
+    data = sql.insertTask(class_bd, css_selector, id, link_text, partial_link_text, name, tag_name, xpath, action, access, quantity, selector, text, position, success_id, error_id)
+    if data:
+        return make_response(jsonify({"Response": True, "Task": data}), 201)
+    else:
+        return make_response(jsonify({"Response": False, "Error": "Error inserting Error"}), 400)
+
 if __name__ == '__main__':
     print ("Running API...")
     app.run(debug=True)
