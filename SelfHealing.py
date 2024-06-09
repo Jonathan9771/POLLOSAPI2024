@@ -83,45 +83,50 @@ def SelfHealing(driver, tasks, tasks_results, TestId):
     page_data_df = pd.DataFrame(data)
 
     # Retrieve and format database data
-    db_data_nonformatted = sql.getAllSuccessfullTasks(TestId)
-    db_data = [
-        {
-            "class": element.get("class", None),
-            "css_selector": element.get("css_selector", None),
-            "id": element.get("id", None),
-            "link_text": element.get("link_text", None),
-            "partial_link_text": element.get("partial_link_text", None),
-            "name": element.get("name", None),
-            "tag_name": element.get("tag_name", None),
-            "xpath": element.get("xpath", None)
-        }
-        for element in db_data_nonformatted
-    ]
-    db_data_df = pd.DataFrame(db_data)
-
-    required_columns = ["class", "css_selector", "id", "link_text", "partial_link_text", "name", "tag_name", "xpath"]
-    for col in required_columns:
-        if col not in db_data_df.columns:
-            db_data_df[col] = 'None'
-
-    # Fill NaN values and ensure consistent data types
-    page_data_df.fillna('None', inplace=True)
-    db_data_df.fillna('None', inplace=True)
-
-    encoder = OneHotEncoder(handle_unknown='ignore')
-
-    combined_data = pd.concat([page_data_df, db_data_df])
-
-    combined_data = combined_data.astype(str)
-
-    encoded_combined_data = encoder.fit_transform(combined_data)
-
-
-    page_data_encoded = encoded_combined_data[:len(page_data_df)]
-    db_data_encoded = encoded_combined_data[len(db_data_df):]
+    
 
     for result in tasks_results:
         if ('Inserted' not in result["Result"]) and ('Clicked' not in result["Result"]):
+
+            action = result["action"]
+            
+            db_data_nonformatted = sql.getAllSuccessfullTasks(TestId, action)
+            db_data = [
+                {
+                    "class": element.get("class", None),
+                    "css_selector": element.get("css_selector", None),
+                    "id": element.get("id", None),
+                    "link_text": element.get("link_text", None),
+                    "partial_link_text": element.get("partial_link_text", None),
+                    "name": element.get("name", None),
+                    "tag_name": element.get("tag_name", None),
+                    "xpath": element.get("xpath", None)
+                }
+                for element in db_data_nonformatted
+            ]
+            db_data_df = pd.DataFrame(db_data)
+
+            required_columns = ["class", "css_selector", "id", "link_text", "partial_link_text", "name", "tag_name", "xpath"]
+            for col in required_columns:
+                if col not in db_data_df.columns:
+                    db_data_df[col] = 'None'
+
+            # Fill NaN values and ensure consistent data types
+            page_data_df.fillna('None', inplace=True)
+            db_data_df.fillna('None', inplace=True)
+
+            encoder = OneHotEncoder(handle_unknown='ignore')
+
+            combined_data = pd.concat([page_data_df, db_data_df])
+
+            combined_data = combined_data.astype(str)
+
+            encoded_combined_data = encoder.fit_transform(combined_data)
+
+
+            page_data_encoded = encoded_combined_data[:len(page_data_df)]
+            db_data_encoded = encoded_combined_data[len(db_data_df):]
+
             step = result["Step"]
 
             current_element_data = {
@@ -156,6 +161,8 @@ def SelfHealing(driver, tasks, tasks_results, TestId):
 
             print("Predicted element:")
             print(page_data_df.iloc[predicted_index])
+
+            return
 
     
 
