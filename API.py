@@ -121,11 +121,11 @@ def getHistory():
     else:
         return make_response(jsonify({"History": data}), 404)
 
-@app.route("/getSuccessfullTasks", methods=['GET'])
-def getSuccessfullTasks():
+@app.route("/getSuccessfulTasks", methods=['GET'])
+def getSuccessfulTasks():
     TestId = request.args.get('TestId')
     action = request.args.get('action')
-    data = sql.getAllSuccessfullTasks(TestId, action)
+    data = sql.getAllSuccessfulTasks(TestId, action)
     if(data):
         return make_response(jsonify({"Tasks": data}), 200)
     else:

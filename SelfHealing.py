@@ -90,7 +90,7 @@ def SelfHealing(driver, tasks, tasks_results, TestId):
 
             action = result["action"]
             
-            db_data_nonformatted = sql.getAllSuccessfullTasks(TestId, action)
+            db_data_nonformatted = sql.getAllSuccessfulTasks(TestId, action)
             db_data = [
                 {
                     "class": element.get("class", None),
